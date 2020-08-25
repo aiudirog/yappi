@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Build
-        run: python setup.py install --develop
+        run: python -m pip install -e .
       - name: Run Tests
         run: python run_tests.py
       - name: Build Wheels
@@ -54,7 +54,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Build
-        run: python setup.py install --develop
+        run: python -m pip install -e .
       - name: Run Tests
         run: python run_tests.py
       - name: Build Wheels
