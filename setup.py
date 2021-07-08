@@ -12,7 +12,7 @@ with io.open('README.md', encoding='UTF-8') as f:
 
 HOMEPAGE = "https://github.com/sumerc/yappi"
 NAME = "yappi"
-VERSION = "1.2.5"
+VERSION = "1.3.2"
 _DEBUG = False  # compile/link code for debugging
 _PROFILE = False  # profile yappi itself
 
@@ -54,6 +54,8 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: Implementation :: CPython',
     'Operating System :: OS Independent',
     'Topic :: Software Development :: Libraries',
@@ -70,12 +72,13 @@ setup(
             "_yappi",
             sources=[
                 "yappi/_yappi.c", "yappi/callstack.c", "yappi/hashtab.c",
-                "yappi/mem.c", "yappi/freelist.c", "yappi/timing.c"
+                "yappi/mem.c", "yappi/freelist.c", "yappi/timing.c",
+                "yappi/tls.c"
             ],
             define_macros=user_macros,
             libraries=user_libraries,
             extra_compile_args=compile_args,
-            extra_link_args=link_args,
+            extra_link_args=link_args
         )
     ],
     package_dir={'': 'yappi'},
@@ -92,4 +95,7 @@ setup(
     classifiers=CLASSIFIERS,
     license="MIT",
     url=HOMEPAGE,
+    extras_require={
+        'test': ['gevent>=20.6.2'],
+    }
 )

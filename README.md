@@ -4,12 +4,12 @@
 
 <h1 align="center">Yappi</h1>
 <p align="center">
-    Yet Another Python Profiler, but this time <b>thread&coroutine</b> aware.
+    Yet Another Python Profiler, but this time <b>thread&coroutine&greenlet</b> aware.
 </p>
 
 <p align="center">
     <img src="https://www.travis-ci.org/sumerc/yappi.svg?branch=master">
-    <img src="https://ci.appveyor.com/api/projects/status/github/sumerc/yappi?branch=master&svg=true">
+    <img src="https://github.com/sumerc/yappi/workflows/CI/badge.svg?branch=master">
     <img src="https://img.shields.io/pypi/v/yappi.svg">
     <img src="https://img.shields.io/pypi/dw/yappi.svg">
     <img src="https://img.shields.io/pypi/pyversions/yappi.svg">
@@ -20,11 +20,11 @@
 ## Highlights
 
 - **Fast**: Yappi is fast. It is completely written in C and lots of love&care went into making it fast.
-- **Unique**: Yappi supports multithreaded and [asynchronous code](https://github.com/sumerc/yappi/blob/master/doc/coroutine-profiling.md) profiling. Tagging/filtering multiple profiler results has interesting [use cases](https://github.com/sumerc/yappi/blob/master/doc/api.md#set_tag_callback).
+- **Unique**: Yappi supports multithreaded, [asyncio](https://github.com/sumerc/yappi/blob/master/doc/coroutine-profiling.md) and [gevent](https://github.com/sumerc/yappi/blob/master/doc/greenlet-profiling.md) profiling. Tagging/filtering multiple profiler results has interesting [use cases](https://github.com/sumerc/yappi/blob/master/doc/api.md#set_tag_callback).
 - **Intuitive**: Profiler can be started/stopped and results can be obtained from any time and any thread.
-- **Standards Complaint**: Profiler results can be saved in [callgrind](http://valgrind.org/docs/manual/cl-format.html) or [pstat](http://docs.python.org/3.4/library/profile.html#pstats.Stats) formats.
+- **Standards Compliant**: Profiler results can be saved in [callgrind](http://valgrind.org/docs/manual/cl-format.html) or [pstat](http://docs.python.org/3.4/library/profile.html#pstats.Stats) formats.
 - **Rich in Feature set**: Profiler results can show either [Wall Time](https://en.wikipedia.org/wiki/Elapsed_real_time) or actual [CPU Time](http://en.wikipedia.org/wiki/CPU_time) and can be aggregated from different sessions. Various flags are defined for filtering and sorting profiler results.
-- **Robust**: Yappi had seen more than *8 years* of production usage.
+- **Robust**: Yappi had seen years of production usage.
 
 ## Motivation
 
@@ -204,7 +204,7 @@ package_a/__init__.py:1 a             1      0.000001  0.000001  0.000001
 '''
 ```
 
-### Profile an async application:
+### Profile an asyncio application:
 
 You can see that coroutine wall-time's are correctly profiled.
 
@@ -239,6 +239,34 @@ doc4.py:15 baz                        1      0.000013  1.001397  1.001397
 '''
 ```
 
+### Profile a gevent application:
+
+You can use yappi to profile greenlet applications now!
+
+```python
+import yappi
+from greenlet import greenlet
+import time
+
+class GreenletA(greenlet):
+    def run(self):
+        time.sleep(1)
+
+yappi.set_context_backend("greenlet")
+yappi.set_clock_type("wall")
+
+yappi.start(builtins=True)
+a = GreenletA()
+a.switch()
+yappi.stop()
+
+yappi.get_func_stats().print_all()
+'''
+name                                  ncall  tsub      ttot      tavg
+tests/test_random.py:6 GreenletA.run  1      0.000007  1.000494  1.000494
+time.sleep                            1      1.000487  1.000487  1.000487
+'''
+```
 
 ## Documentation
 
@@ -246,6 +274,7 @@ doc4.py:15 baz                        1      0.000013  1.001397  1.001397
 - [Clock Types](https://github.com/sumerc/yappi/blob/master/doc/clock_types.md)
 - [API](https://github.com/sumerc/yappi/blob/master/doc/api.md)
 - [Coroutine Profiling](https://github.com/sumerc/yappi/blob/master/doc/coroutine-profiling.md) _(new in 1.2)_
+- [Greenlet Profiling](https://github.com/sumerc/yappi/blob/master/doc/greenlet-profiling.md) _(new in 1.3)_
 
   Note: Yes. I know I should be moving docs to readthedocs.io. Stay tuned!
 
