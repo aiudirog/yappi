@@ -27,6 +27,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install test dependencies
-      run: python -m pip install .[test]
+      run: python -m pip install .[test] wheel
     - name: run tests
       run: python run_tests.py
+    - name: Build Wheels
+      run: python setup.py bdist_wheel
+    - name: Save Wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheel-${{ matrix.python }}
+        path: dist/*.whl
