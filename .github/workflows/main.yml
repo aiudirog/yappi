@@ -35,5 +35,5 @@ jobs:
     - name: Save Wheels
       uses: actions/upload-artifact@v2
       with:
-        name: wheel-${{ matrix.python }}
+        name: wheel-${{ matrix.python-version }}
         path: dist/*.whl
